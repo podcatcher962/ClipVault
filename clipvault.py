@@ -153,7 +153,7 @@ class ClipVault:
             "Python 3 + tkinter + SQLite\n"
             "纯本地存储 · 零隐私风险\n\n"
             "GitHub: https://github.com/podcatcher962/ClipVault\n"
-            "© podcatcher962")
+            "© 永远的兰兰")
 
     @staticmethod
     def _cbtn(parent, text, color, cmd, side=None, padx=1, small=False):
@@ -172,7 +172,7 @@ class ClipVault:
         title_bar.pack_propagate(False)
         tk.Label(title_bar, text="📋 ClipVault", font=('Microsoft YaHei UI',11,'bold'),
                  bg=self.accent, fg='white').pack(side=tk.LEFT, padx=12, pady=5)
-        tk.Label(title_bar, text="极简剪贴板", font=('Microsoft YaHei UI',8),
+        tk.Label(title_bar, text="永远的兰兰 · 极简剪贴板", font=('Microsoft YaHei UI',8),
                  bg=self.accent, fg='#E0D4FF').pack(side=tk.RIGHT, padx=12, pady=5)
 
         # Tab switcher
