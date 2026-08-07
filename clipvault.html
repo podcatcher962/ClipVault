@@ -247,10 +247,15 @@ function cleanClips(){
   document.getElementById('status').textContent=t('cleaned');
 }
 
-function pasteClip(){
-  var text=prompt('📎 粘贴剪贴板内容\n\n1. 在电脑上 Ctrl+C 复制文字\n2. 点确定后 Ctrl+V 粘贴到这里\n（或者直接输入文字）');
-  if(!text||!text.trim())return;
-  addClip(text.trim());
+async function pasteClip(){
+  try{
+    var text=await navigator.clipboard.readText();
+    if(!text||!text.trim()){document.getElementById('status').textContent='📋 剪贴板为空';return}
+    addClip(text.trim());
+  }catch(e){
+    var text=prompt('📎 无法自动读取剪贴板（需授权）\n\n请 Ctrl+V 粘贴这里，或者直接输入文字：');
+    if(text&&text.trim())addClip(text.trim());
+  }
 }
 
 function addClip(text){
