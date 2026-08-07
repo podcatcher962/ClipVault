@@ -75,3 +75,25 @@ ClipVault is a minimalist Windows clipboard manager. Auto-records text on copy, 
 
 GitHub: https://github.com/podcatcher962/ClipVault
 © 永远的兰兰 / forever-chitanda
+
+---
+
+## 免责声明 / Disclaimer
+
+### 中文
+
+1. ClipVault 的剪贴板监听功能仅记录用户主动复制（Ctrl+C）的文字内容，不记录图片、文件路径、二进制数据。本软件不记录键盘输入（非键盘记录器），仅被动读取系统剪贴板中的文本变化。
+2. 任何具有管理员权限的程序均可读取系统剪贴板。本软件与 Windows 系统剪贴板机制一致，不引入额外安全风险。用户应自行避免将密码、银行卡号等敏感信息存入剪贴板。
+3. 本软件按"原样"（AS-IS）提供，不提供任何明示或暗示的担保。开发者不对因使用或无法使用本软件导致的任何数据丢失承担责任。
+4. 所有剪贴板数据完全存储于本地 SQLite 数据库，不会上传至任何服务器，不连接互联网。
+5. 预设常用库中的数学符号、特殊字符等为 Unicode 标准字符，不涉及第三方版权。
+6. 使用者须遵守所在地法律法规。本软件仅供个人学习与工作效率提升使用。
+
+### English
+
+1. ClipVault only records text copied via Ctrl+C. No images, files, or binary data. It is NOT a keylogger — it passively reads text changes from the system clipboard only.
+2. Any program with admin privileges can read the system clipboard. ClipVault operates within standard Windows clipboard mechanisms and introduces no additional security risk. Do not copy sensitive information like passwords or bank card numbers.
+3. This software is provided AS-IS without warranty of any kind. The developer assumes no responsibility for data loss resulting from use or inability to use this software.
+4. All clipboard data is stored entirely in a local SQLite database. No data is uploaded to any server.
+5. Preset library symbols are standard Unicode characters and do not involve third-party copyright.
+6. Users must comply with local laws. For personal study and productivity use only.
