@@ -5,140 +5,254 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ClipVault · 剪贴板管理器</title>
 <style>
-:root{--bg:#F5F5F5;--card:#FFF;--accent:#7C4DFF;--fg:#212121;--fg2:#757575;--border:#E0E0E0;--green:#00C853;--orange:#FF9100;--red:#FF5252;--blue:#448AFF}
+:root{--bg:#F5F5F5;--card:#FFF;--accent:#7C4DFF;--fg:#212121;--fg2:#757575;--border:#E0E0E0;--green:#00C853;--orange:#FF9100;--red:#FF5252;--blue:#448AFF;--teal:#00BFA5}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Microsoft YaHei UI','PingFang SC',sans-serif;background:var(--bg);color:var(--fg);max-width:580px;margin:0 auto;padding:8px;min-height:100vh;display:flex;flex-direction:column}
 .title-bar{flex-shrink:0;background:var(--accent);color:#fff;padding:12px 16px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between}
 .title-bar h1{font-size:18px;margin:0}
 .title-bar .sub{font-size:12px;opacity:0.85}
-.lang-btn{background:#4A148C;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;white-space:nowrap}
-.search-box{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-top:none;padding:8px 14px}
-.search-box input{width:100%;padding:8px 12px;font-size:14px;border:1px solid var(--border);border-radius:5px;outline:none}
-.cat-bar{flex-shrink:0;display:flex;flex-wrap:wrap;gap:4px;padding:8px 12px;background:#F3E5FF;border:1px solid var(--accent);border-top:none}
-.cat-btn{padding:6px 10px;font-size:11px;border:1px solid var(--border);border-radius:5px;background:var(--card);cursor:pointer;white-space:nowrap;font-weight:600}
-.cat-btn.active{background:var(--accent);color:#fff}
-.btn-row{flex-shrink:0;display:flex;gap:4px;padding:6px 12px;background:var(--card);border:1px solid var(--border);border-top:none}
-.btn-row button{padding:6px 12px;border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:12px;font-weight:600}
-.snippet-grid{flex:1;min-height:160px;background:var(--card);border:1px solid var(--border);border-top:none;overflow-y:auto;padding:8px 12px;display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start}
-.snip-item{padding:6px 10px;background:#F5F0FF;border:1px solid #E0D0FF;border-radius:4px;cursor:pointer;font-size:12px;white-space:nowrap;transition:all .15s}
-.snip-item:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-.snip-item.long{white-space:normal;max-width:100%}
-.snip-cat{width:100%;font-size:11px;font-weight:700;color:var(--accent);padding:8px 0 2px;border-bottom:1px solid #E0D0FF;margin-bottom:4px}
-.preview{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-top:none;padding:10px 14px;font-size:12px;color:var(--fg2);min-height:32px;word-break:break-all}
-.bottom-bar{flex-shrink:0;display:flex;gap:4px;padding:8px 12px;background:#F3E5FF;border:1px solid var(--accent);border-top:none;border-radius:0 0 8px 8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.right-btn{display:flex;gap:6px}
+.right-btn a,.right-btn button{background:#4A148C;color:#fff;text-decoration:none;padding:6px 12px;border:none;border-radius:4px;font-size:12px;white-space:nowrap;font-weight:600;cursor:pointer}
+.lang-btn{background:#4A148C;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px}
+.tab-bar{flex-shrink:0;display:flex;gap:4px;padding:8px 12px;background:#F3E5FF;border:1px solid var(--accent);border-top:none}
+.tab-btn{padding:6px 14px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:5px;background:var(--card);cursor:pointer}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.search-box{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-top:none;padding:6px 10px}
+.search-box input{width:100%;padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:4px;outline:none}
+.btn-row{flex-shrink:0;display:flex;gap:4px;padding:6px 10px;background:var(--card);border:1px solid var(--border);border-top:none;flex-wrap:wrap}
+.btn-row button{padding:5px 10px;border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:11px;white-space:nowrap;font-weight:700}
+.list-area{flex:1;min-height:200px;background:var(--card);border:1px solid var(--border);border-top:none;overflow-y:auto;padding:5px}
+.cat-header{font-size:11px;font-weight:700;color:var(--accent);padding:6px 6px 3px;border-bottom:1px solid #E0D0FF;margin-bottom:4px}
+.list-item{padding:6px 10px;cursor:pointer;border-radius:3px;font-size:12px;line-height:1.5;word-break:break-all;border-bottom:1px solid #F0F0F0}
+.list-item:hover{background:#F8F4FF}
+.list-item.selected{background:#EEE8FF;border-left:3px solid var(--accent)}
+.list-item .item-preview{font-weight:600}
+.list-item .item-meta{font-size:10px;color:var(--fg2)}
+.preview{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-top:none;padding:8px 12px;font-size:12px;color:var(--fg2);min-height:28px;word-break:break-all}
+.bottom-bar{flex-shrink:0;display:flex;gap:4px;padding:6px 10px;background:#F3E5FF;border:1px solid var(--accent);border-top:none;border-radius:0 0 8px 8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
 .bottom-bar .status{font-size:11px;color:var(--fg)}
-footer{text-align:center;color:var(--fg2);font-size:10px;padding:10px 0 6px}
+footer{flex-shrink:0;text-align:center;color:var(--fg2);font-size:10px;padding:10px 0 6px}
 footer a{color:var(--accent);text-decoration:none}
-@media(max-width:480px){.cat-btn{padding:4px 7px;font-size:10px}.snip-item{padding:5px 8px;font-size:11px}}
+@media(max-width:520px){.tab-btn{padding:5px 10px;font-size:11px}.btn-row button{padding:4px 7px;font-size:10px}}
 </style>
 </head>
 <body>
 <div class="title-bar">
   <div><h1>📋 ClipVault</h1><span class="sub" id="subTitle">永远的兰兰 · 剪贴板管理器</span></div>
-  <button class="lang-btn" onclick="toggleLang()" id="langBtn">中/EN</button>
+  <div class="right-btn">
+    <a href="https://github.com/podcatcher962/ClipVault/releases/latest" target="_blank" id="dlBtn">💻 桌面版</a>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">中/EN</button>
+  </div>
 </div>
-<div class="search-box"><input id="search" placeholder="搜索..." oninput="renderSnippets()"></div>
-<div class="cat-bar" id="catBar"></div>
-<div class="btn-row">
-  <button style="background:var(--green)" onclick="addSnippet()" id="btnAdd">＋ 添加</button>
-  <button style="background:var(--blue)" onclick="copySelected()" id="btnCopy">📋 复制</button>
-  <button style="background:var(--orange)" onclick="editSnippet()" id="btnEdit">✎ 编辑</button>
-  <button style="background:var(--red)" onclick="deleteSnippet()" id="btnDel">🗑 删除</button>
-  <button style="background:var(--accent)" onclick="pasteFromClipboard()" id="btnPaste">📎 黏贴</button>
+<div class="info-bar">
+  <a href="#" onclick="showModal('help');return false" id="linkHelp">📖 使用说明</a>
+  <a href="#" onclick="showModal('disclaimer');return false" id="linkDisc">⚠ 免责声明</a>
+  <a href="#" onclick="showModal('about');return false" id="linkAbout">ℹ 关于</a>
+  <span>© 永远的兰兰</span>
 </div>
-<div class="snippet-grid" id="grid"></div>
-<div class="preview" id="preview">💡 点击常用项即可复制 · 用于保存高频输入的文字</div>
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabClips" onclick="switchTab('clips')">📋 剪贴历史</button>
+  <button class="tab-btn" id="tabSnippets" onclick="switchTab('snippets')">📁 常用库</button>
+</div>
+<div class="search-box"><input id="search" placeholder="搜索..." oninput="renderList()"></div>
+<div class="btn-row" id="btnRow"></div>
+<div class="list-area" id="listArea"></div>
+<div class="preview" id="preview">💡 点击列表内容查看预览 · 蓝色按钮复制</div>
 <div class="bottom-bar">
-  <span class="status" id="status"></span>
-  <span style="font-size:10px;color:var(--fg2)">纯本地 · localStorage · 不联网</span>
+  <span class="status" id="status">📋 浏览器无法后台监听剪贴板 · 请点 📎 黏贴 后 Ctrl+V</span>
 </div>
-<footer>
-  <a href="https://github.com/podcatcher962/ClipVault" target="_blank">github.com/podcatcher962/ClipVault</a> · © 永远的兰兰 / forever-chitanda
-</footer>
+<footer><a href="https://github.com/podcatcher962/ClipVault" target="_blank">github.com/podcatcher962/ClipVault</a> · 纯本地 · localStorage · 不联网</footer>
+
+<div id="modalOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#FFF;border-radius:10px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);font-size:13px;line-height:1.7">
+    <h2 style="margin:0 0 12px;font-size:18px" id="modalTitle"></h2>
+    <div id="modalBody" style="white-space:pre-wrap"></div>
+    <button onclick="document.getElementById('modalOverlay').style.display='none'" style="margin-top:16px;padding:8px 24px;background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:14px">✕ 关闭</button>
+  </div>
+</div>
 
 <script>
-const T={zh:{title:'永远的兰兰 · 剪贴板管理器',add:'＋ 添加',copy:'📋 复制',edit:'✎ 编辑',del:'🗑 删除',paste:'📎 黏贴',
-  copied:'✅ 已复制',deleted:'已删除',added:'✅ 已添加',updated:'✅ 已更新',cleared:'已清空',
-  hint:'💡 点击常用项即可复制 · 用于保存高频输入的文字',search:'搜索...',local:'纯本地 · localStorage · 不联网',
-  addPrompt:'输入要保存的文字：',catPrompt:'分类名称：',catDefault:'自定义',editPrompt:'修改文字：'},
-en:{title:'forever-chitanda · Snippet Library',add:'＋ Add',copy:'📋 Copy',edit:'✎ Edit',del:'🗑 Del',paste:'📎 Paste',
-  copied:'✅ Copied',deleted:'Deleted',added:'✅ Added',updated:'✅ Updated',cleared:'Cleared',
-  hint:'💡 Click item to copy · Save frequently used text',search:'Search...',local:'Local · localStorage · No internet',
-  addPrompt:'Enter text to save:',catPrompt:'Category name:',catDefault:'Custom',editPrompt:'Edit text:'}};
+const T={zh:{title:'永远的兰兰 · 剪贴板管理器',tabClips:'📋 剪贴历史',tabSnippets:'📁 常用库',
+  pin:'📌 置顶',copy:'📋 复制',delete:'🗑 删除',clean:'🧹 清空',add:'＋ 添加',edit:'✎ 编辑',paste:'📎 黏贴',
+  copied:'✅ 已复制',added:'✅ 已添加',updated:'✅ 已更新',deleted:'已删除',cleaned:'已清理',
+  pinned:'📌 已置顶',unpinned:'已取消置顶',preview:'提示',search:'搜索...',
+  hint:'📋 浏览器无法后台监听剪贴板 · 请点 📎 黏贴 后 Ctrl+V',
+  addPrompt:'输入要保存的文字：',catPrompt:'分类：',catDefault:'自定义',editPrompt:'修改文字：',
+  confirmClean:'删除所有非置顶历史？\n\n📌 已置顶的条目会保留。',
+  all:'全部',opts:'选项'},
+
+en:{title:'forever-chitanda · Clipboard Manager',tabClips:'📋 History',tabSnippets:'📁 Library',
+  pin:'📌 Pin',copy:'📋 Copy',delete:'🗑 Del',clean:'🧹 Clear',add:'＋ Add',edit:'✎ Edit',paste:'📎 Paste',
+  copied:'✅ Copied',added:'✅ Added',updated:'✅ Updated',deleted:'Deleted',cleaned:'Cleared',
+  pinned:'📌 Pinned',unpinned:'Unpinned',preview:'Tip',search:'Search...',
+  hint:'📋 Browser cannot monitor clipboard. Click 📎 Paste then Ctrl+V',
+  addPrompt:'Enter text:',catPrompt:'Category:',catDefault:'Custom',editPrompt:'Edit text:',
+  confirmClean:'Delete all unpinned history?\n\n📌 Pinned items are kept.',
+  all:'All',opts:'Options'}};
+
+const MODAL_TEXT={zh:{
+  help:'📖 ClipVault 使用说明\n\n浏览器出于安全考虑不允许 JS 后台监听剪贴板，所以 Web 版只能手动添加。\n\n📋 剪贴历史：点 📎 黏贴 → 在弹窗里 Ctrl+V 文本 → 自动保存到历史（最多 1000 条）。\n📌 置顶：重要内容固定列表顶部。\n🗑 删除：移除选中条目。\n🧹 清空：一次清理所有非置顶历史。\n\n📁 常用库：保存符号、地址、模板等高频输入。\n＋ 添加：输入内容+选择分类。\n✎ 编辑：修改选中内容。\n🗑 删除：移除选中条目。\n\n所有数据存储在 localStorage 中，不联网。',
+  disclaimer:'⚠️ 免责声明\n\n1. ClipVault Web 版仅在浏览器本地运行，不上传任何服务器。\n2. 浏览器出于安全限制不允许后台监听剪贴板，因此 Web 版只能手动添加剪贴记录。\n3. 本软件按"原样"（AS-IS）提供，不提供任何明示或暗示的担保。\n4. 建议不要记录密码、银行卡号等敏感信息。\n5. 使用者须遵守所在地法律法规。',
+  about:'ClipVault v1.2\n\n剪贴板管理器 + 常用库\n\n桌面版: Python 3 + tkinter + SQLite, 12MB\nWeb 版: 纯 HTML + CSS + JS, 单文件\n\nGitHub: https://github.com/podcatcher962/ClipVault\n© 永远的兰兰'},
+en:{help:'📖 ClipVault Help\n\nBrowsers prevent JS from monitoring clipboard. Use 📎 Paste → Ctrl+V in dialog to save clipboard text.\n\n📋 History: Click 📎 Paste → Ctrl+V → save to history (max 1000)\n📌 Pin: Keep important items at top\n🗑 Delete: Remove selected\n🧹 Clear: Delete all unpinned\n\n📁 Library: Save frequently used text\n＋ Add: Enter text + category\n✎ Edit: Modify selected\n🗑 Delete: Remove selected\n\nAll stored in localStorage, no internet.',
+  disclaimer:'⚠️ Disclaimer\n\n1. Pure local browser app. No server uploads.\n2. Browser security blocks background clipboard monitoring. Web version requires manual paste.\n3. Provided AS-IS without warranty.\n4. Do not store passwords or sensitive data.\n5. Users must comply with local laws.',
+  about:'ClipVault v1.2\n\nClipboard Manager + Snippet Library\nDesktop: Python 3 + tkinter + SQLite, 12MB\nWeb: Pure HTML+CSS+JS, single-file\n\nGitHub: https://github.com/podcatcher962/ClipVault\n© 永远的兰兰 / forever-chitanda'}};
+
 let L='zh';
 try{L=localStorage.getItem('cvlang')||'zh'}catch(e){}
 function t(k){return T[L][k]||k}
 
-// Preset data
-const PRESETS=[
-{c:'📐 数学符号',items:['×','÷','±','√','∞','≠','≈','≤','≥','π','θ','α','β','γ','∑','∫']},
-{c:'🔤 特殊符号',items:['①','②','③','★','☆','♥','♦','→','←','↑','↓','™','©','®','§','¶']},
-{c:'🈳 中文标点',items:['「','」','『','』','【','】','《','》','——','……','～','·','、']},
-{c:'⌨️ 常用符号',items:['@','#','$','%','&','*','(','[','{','<','/','\\','|','~']},
-{c:'💼 工作常用',items:['收到，谢谢！我会尽快处理。','请查收附件。如有问题随时联系。','好的，我确认一下再回复你。','✅ 已完成，请查看。','📅 会议时间：']},
-];
-let snippets=JSON.parse(localStorage.getItem('cvsnippets')||'null');
-if(!snippets){snippets=JSON.parse(JSON.stringify(PRESETS));saveSnips()}
-let currentCat='all',selectedCat='',selectedIdx=-1;
+const PRESETS={zh:[{c:'📐 数学符号',items:['×','÷','±','√','∞','≠','≈','≤','≥','π','θ','α','β','∑','∫']},{c:'🔤 特殊符号',items:['①','②','③','★','☆','♥','♦','→','←','↑','↓','™','©','®','§']},{c:'🈳 中文标点',items:['「','」','『','』','【','】','《','》','——','……','～','·','、']},{c:'⌨️ 常用符号',items:['@','#','$','%','&','*','(','[','{','<','/','\\','|','~']},{c:'💼 工作常用',items:['收到，谢谢！我会尽快处理。','请查收附件。如有问题随时联系。','✅ 已完成，请查看。','📅 会议时间：']}],
+en:[{c:'📐 Math',items:['×','÷','±','√','∞','≠','≈','≤','≥','π','θ','α','β','∑','∫']},{c:'🔤 Symbols',items:['①','②','③','★','☆','♥','♦','→','←','↑','↓','™','©','®','§']},{c:'🈳 Punctuation',items:['「','」','『','』','【','】','《','》','——','……','～','·','、']},{c:'⌨️ Common',items:['@','#','$','%','&','*','(','[','{','<','/','\\','|','~']},{c:'💼 Work',items:['Got it, thanks! Will handle ASAP.','Please check the attachment.','✅ Done.','📅 Meeting time:']}]};
 
-function saveSnips(){localStorage.setItem('cvsnippets',JSON.stringify(snippets))}
+let clips=JSON.parse(localStorage.getItem('cvclips')||'[]');
+let snippets=JSON.parse(localStorage.getItem('cvsnippets')||'null');
+if(!snippets){snippets=JSON.parse(JSON.stringify(PRESETS[L]));saveSnippets()}
+let currentTab='clips',selectedType='',selectedId=-1;
+
+function saveClips(){localStorage.setItem('cvclips',JSON.stringify(clips))}
+function saveSnippets(){localStorage.setItem('cvsnippets',JSON.stringify(snippets))}
 
 function buildUI(){
   document.getElementById('subTitle').textContent=t('title');
   document.getElementById('langBtn').textContent=L=='zh'?'中/EN':'EN/中';
+  document.getElementById('dlBtn').textContent=L=='zh'?'💻 桌面版':'💻 Desktop';
   document.getElementById('search').placeholder=t('search');
-  document.getElementById('btnAdd').textContent=t('add');
-  document.getElementById('btnCopy').textContent=t('copy');
-  document.getElementById('btnEdit').textContent=t('edit');
-  document.getElementById('btnDel').textContent=t('del');
-  document.getElementById('btnPaste').textContent=t('paste');
-  document.getElementById('preview').textContent=t('hint');
-  var bar=document.getElementById('catBar');
-  bar.innerHTML='<button class="cat-btn'+(currentCat==='all'?' active':'')+'" onclick="setCat(\'all\')">全部</button>';
-  var cats=[...new Set(snippets.map(function(s){return s.c}))];
-  cats.forEach(function(c){
-    var btn=document.createElement('button');
-    btn.className='cat-btn'+(currentCat===c?' active':'');
-    btn.textContent=c;btn.onclick=function(){setCat(c)};
-    bar.appendChild(btn);
-  });
-  renderSnippets();
+  document.getElementById('tabClips').textContent=t('tabClips');
+  document.getElementById('tabSnippets').textContent=t('tabSnippets');
+  document.getElementById('linkHelp').textContent=L=='zh'?'📖 使用说明':'📖 Help';
+  document.getElementById('linkDisc').textContent=L=='zh'?'⚠ 免责声明':'⚠ Disclaimer';
+  document.getElementById('linkAbout').textContent=L=='zh'?'ℹ 关于':'ℹ About';
+  document.getElementById('status').textContent=t('hint');
+  document.getElementById('tabClips').classList.toggle('active',currentTab==='clips');
+  document.getElementById('tabSnippets').classList.toggle('active',currentTab==='snippets');
+  renderButtons();renderList();
 }
-function setCat(c){currentCat=c;selectedCat=c;selectedIdx=-1;buildUI()}
 
-function renderSnippets(){
+function switchTab(tab){
+  currentTab=tab;selectedType='';selectedId=-1;
+  document.getElementById('tabClips').classList.toggle('active',tab==='clips');
+  document.getElementById('tabSnippets').classList.toggle('active',tab==='snippets');
+  renderButtons();renderList();
+}
+
+function renderButtons(){
+  var row=document.getElementById('btnRow');row.innerHTML='';
+  if(currentTab==='clips'){
+    addBtn(row, t('copy'), 'var(--blue)', copySelected);
+    addBtn(row, t('pin'), 'var(--orange)', togglePin);
+    addBtn(row, t('delete'), 'var(--red)', deleteClip);
+    addBtn(row, t('clean'), 'var(--teal)', cleanClips);
+    addBtn(row, t('paste'), 'var(--accent)', pasteClip);
+  }else{
+    addBtn(row, t('copy'), 'var(--blue)', copySelected);
+    addBtn(row, t('add'), 'var(--green)', addSnippet);
+    addBtn(row, t('edit'), 'var(--orange)', editSnippet);
+    addBtn(row, t('delete'), 'var(--red)', deleteSnippet);
+    addBtn(row, t('paste'), 'var(--accent)', pasteSnippet);
+  }
+}
+function addBtn(p,lbl,col,fn){
+  var b=document.createElement('button');b.textContent=lbl;b.style.background=col;b.onclick=fn;
+  p.appendChild(b);
+}
+
+function renderList(){
   var kw=(document.getElementById('search').value||'').trim().toLowerCase();
-  var grid=document.getElementById('grid');grid.innerHTML='';
-  var filtered=snippets.filter(function(s){
-    if(currentCat!=='all'&&s.c!==currentCat)return false;
-    if(kw)return s.items.some(function(i){return i.toLowerCase().indexOf(kw)>=0});
-    return true;
-  });
-  var lastC='';
-  filtered.forEach(function(cat){
-    if(cat.c!==lastC){var h=document.createElement('div');h.className='snip-cat';h.textContent=cat.c;grid.appendChild(h);lastC=cat.c}
-    cat.items.forEach(function(item){
-      if(kw&&item.toLowerCase().indexOf(kw)<0)return;
-      var btn=document.createElement('button');
-      btn.className='snip-item'+(item.length>12?' long':'');
-      btn.textContent=item.length>14?(item.slice(0,12)+'..'):item;
-      btn.title=item;
-      btn.onclick=function(){copyAndSelect(item,cat,btn)};
-      btn.oncontextmenu=function(e){e.preventDefault();deleteItem(cat,item)};
-      grid.appendChild(btn);
+  var area=document.getElementById('listArea');area.innerHTML='';
+  if(currentTab==='clips'){
+    var filtered=clips.filter(function(c){return!kw||c.content.toLowerCase().indexOf(kw)>=0});
+    filtered.forEach(function(c){
+      var div=document.createElement('div');
+      div.className='list-item'+(c.id===selectedId?' selected':'');
+      div.innerHTML='<div class="item-preview">'+(c.pinned?'📌 ':'')+(c.content.length>50?c.content.slice(0,50)+'...':c.content)+'</div><div class="item-meta">'+c.time+'</div>';
+      div.onclick=function(){selectItem('clip',c.id)};
+      div.ondblclick=function(){copyText(c.content)};
+      area.appendChild(div);
     });
-  });
-  document.getElementById('status').textContent=kw?'搜索: '+kw:'';
+    if(!filtered.length){var e=document.createElement('div');e.style.color='var(--fg2)';e.style.padding='20px';e.style.textAlign='center';e.textContent='暂无历史，点黏贴按钮添加';area.appendChild(e)}
+  }else{
+    var lastC='';
+    var cats=snippets;
+    cats.forEach(function(cat){
+      var header=document.createElement('div');
+      header.className='cat-header';header.textContent=cat.c;area.appendChild(header);
+      cat.items.forEach(function(item,idx){
+        if(kw&&item.toLowerCase().indexOf(kw)<0)return;
+        var div=document.createElement('div');
+        div.className='list-item'+(snippets===cats&&idx===selectedId?'':'');
+        div.innerHTML='<div class="item-preview">'+item+'</div>';
+        div.onclick=function(){selectSnip(cat,idx)};div.ondblclick=function(){copyText(item)};
+        area.appendChild(div);
+      });
+    });
+    if(!cats.length){var e=document.createElement('div');e.style.color='var(--fg2)';e.style.padding='20px';e.style.textAlign='center';e.textContent='点击 ＋ 添加 创建';area.appendChild(e)}
+  }
 }
 
-function copyAndSelect(item,cat,btn){
-  navigator.clipboard.writeText(item).then(function(){
-    document.getElementById('preview').textContent=item;
-    document.querySelectorAll('.snip-item').forEach(function(b){b.style.background='';b.style.color='';b.style.borderColor=''});
-    btn.style.background=var(--accent);btn.style.color='#fff';
+function selectItem(type,id){selectedType=type;selectedId=id;renderList();
+  var item=clips.find(function(c){return c.id===id});
+  if(item)document.getElementById('preview').textContent=item.content;
+}
+
+function selectSnip(cat,idx){
+  selectedType='snip';selectedId=cat.items[idx];
+  document.getElementById('preview').textContent=cat.items[idx];
+  renderList();
+}
+
+function copySelected(){
+  if(currentTab==='clips'&&selectedId>0){
+    var c=clips.find(function(x){return x.id===selectedId});if(c)copyText(c.content);
+  }else if(selectedType==='snip'){
+    copyText(selectedId);
+  }
+}
+
+function copyText(text){
+  if(!text)return;
+  navigator.clipboard.writeText(text).then(function(){
     document.getElementById('status').textContent=t('copied');
-    selectedCat=cat.c;selectedIdx=cat.items.indexOf(item);
+  }).catch(function(){
+    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    document.getElementById('status').textContent=t('copied');
   });
+}
+
+function togglePin(){
+  if(selectedId<0)return;
+  var c=clips.find(function(x){return x.id===selectedId});if(!c)return;
+  c.pinned=c.pinned?0:1;saveClips();renderList();
+  document.getElementById('status').textContent=c.pinned?t('pinned'):t('unpinned');
+}
+
+function deleteClip(){
+  if(selectedId<0)return;
+  clips=clips.filter(function(x){return x.id!==selectedId});selectedId=-1;
+  saveClips();renderList();document.getElementById('preview').textContent='';
+  document.getElementById('status').textContent=t('deleted');
+}
+
+function cleanClips(){
+  if(!confirm(t('confirmClean')))return;
+  clips=clips.filter(function(c){return c.pinned});
+  saveClips();renderList();document.getElementById('preview').textContent='（已清空，仅保留置顶内容）';
+  document.getElementById('status').textContent=t('cleaned');
+}
+
+function pasteClip(){
+  var text=prompt('📎 粘贴剪贴板内容\n\n1. 在电脑上 Ctrl+C 复制文字\n2. 点确定后 Ctrl+V 粘贴到这里\n（或者直接输入文字）');
+  if(!text||!text.trim())return;
+  addClip(text.trim());
+}
+
+function addClip(text){
+  var now=new Date();var nowStr=now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  var id=Date.now();
+  clips.unshift({id:id,content:text,time:nowStr,pinned:0});
+  if(clips.length>1000)clips=clips.filter(function(c){return c.pinned}).concat(clips.filter(function(c){return!c.pinned}).slice(0,999));
+  saveClips();selectedId=id;renderList();
+  document.getElementById('status').textContent='✅ 已捕获';
 }
 
 function addSnippet(){
@@ -148,49 +262,50 @@ function addSnippet(){
   var found=snippets.find(function(s){return s.c===cat});
   if(found)found.items.push(text);
   else snippets.push({c:cat,items:[text]});
-  saveSnips();buildUI();document.getElementById('status').textContent=t('added');
-}
-
-function copySelected(){
-  if(selectedCat&&selectedIdx>=0){
-    var cat=snippets.find(function(s){return s.c===selectedCat});
-    if(cat&&selectedIdx<cat.items.length){
-      navigator.clipboard.writeText(cat.items[selectedIdx]);
-      document.getElementById('status').textContent=t('copied');
-    }
-  }
+  saveSnippets();renderList();
+  document.getElementById('status').textContent=t('added');
 }
 
 function editSnippet(){
-  if(!selectedCat||selectedIdx<0)return;
-  var cat=snippets.find(function(s){return s.c===selectedCat});
-  if(!cat||selectedIdx>=cat.items.length)return;
-  var text=prompt(t('editPrompt'),cat.items[selectedIdx]);
-  if(text&&text.trim()){cat.items[selectedIdx]=text;saveSnips();buildUI();document.getElementById('status').textContent=t('updated')}
+  if(selectedType!=='snip'){document.getElementById('status').textContent='请先选中';return}
+  var foundCat=null,foundIdx=-1;
+  for(var i=0;i<snippets.length;i++){var j=snippets[i].items.indexOf(selectedId);if(j>=0){foundCat=snippets[i];foundIdx=j;break;}}
+  if(!foundCat)return;
+  var text=prompt(t('editPrompt'),foundCat.items[foundIdx]);
+  if(text&&text.trim()){foundCat.items[foundIdx]=text;saveSnippets();renderList();
+  document.getElementById('status').textContent=t('updated');}
 }
 
 function deleteSnippet(){
-  if(!selectedCat||selectedIdx<0)return;
-  var cat=snippets.find(function(s){return s.c===selectedCat});
-  if(!cat||selectedIdx>=cat.items.length)return;
-  cat.items.splice(selectedIdx,1);
-  if(!cat.items.length)snippets=snippets.filter(function(s){return s.c!==selectedCat});
-  selectedIdx=-1;selectedCat='';saveSnips();buildUI();document.getElementById('status').textContent=t('deleted');
+  if(selectedType!=='snip')return;
+  var foundCat=null,foundIdx=-1;
+  for(var i=0;i<snippets.length;i++){var j=snippets[i].items.indexOf(selectedId);if(j>=0){foundCat=snippets[i];foundIdx=j;break;}}
+  if(!foundCat)return;
+  foundCat.items.splice(foundIdx,1);
+  if(!foundCat.items.length)snippets=snippets.filter(function(s){return s.c!==foundCat.c});
+  selectedId=-1;saveSnippets();renderList();
+  document.getElementById('status').textContent=t('deleted');
 }
 
-function deleteItem(cat,item){
-  cat.items=cat.items.filter(function(i){return i!==item});
-  if(!cat.items.length)snippets=snippets.filter(function(s){return s.c!==cat.c});
-  saveSnips();buildUI();document.getElementById('status').textContent=t('deleted');
-}
-
-async function pasteFromClipboard(){
-  try{var text=await navigator.clipboard.readText();
-    if(text&&text.trim()){document.getElementById('preview').textContent=text;document.getElementById('status').textContent='黏贴板: '+text.slice(0,40)}
-  }catch(e){document.getElementById('status').textContent='❌ 浏览器不支持或未授权'}
+function pasteSnippet(){
+  var text=prompt('📎 粘贴要保存的内容\n（或者直接输入文字）');
+  if(!text||!text.trim())return;
+  var cat=prompt(t('catPrompt'),t('catDefault'))||t('catDefault');
+  var found=snippets.find(function(s){return s.c===cat});
+  if(found)found.items.push(text);
+  else snippets.push({c:cat,items:[text]});
+  saveSnippets();renderList();
+  document.getElementById('status').textContent=t('added');
 }
 
 function toggleLang(){L=L=='zh'?'en':'zh';try{localStorage.setItem('cvlang',L)}catch(e){}buildUI()}
+
+function showModal(key){
+  document.getElementById('modalTitle').textContent=key==='help'?(L==='zh'?'📖 使用说明':'📖 Help'):key==='disclaimer'?(L==='zh'?'⚠️ 免责声明':'⚠️ Disclaimer'):(L==='zh'?'ℹ 关于':'ℹ About');
+  document.getElementById('modalBody').textContent=MODAL_TEXT[L][key];
+  document.getElementById('modalOverlay').style.display='flex';
+  document.getElementById('modalOverlay').onclick=function(e){if(e.target===this)this.style.display='none'};
+}
 
 buildUI();
 </script>
