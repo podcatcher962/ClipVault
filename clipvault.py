@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ClipVault v1.1 — 极简中文剪贴板管理器 + 常用库"""
+"""ClipVault v1.2 — 极简剪贴板管理器 + 常用库 / Clipboard Manager + Snippet Library"""
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import os, sys, sqlite3, threading, time, datetime
@@ -8,7 +8,109 @@ import pyperclip
 APP_DIR = os.path.dirname(sys.executable) if getattr(sys,'frozen',False) else os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(APP_DIR, "clipvault.db")
 
-DISCLAIMER = """⚠️ 免责声明
+# ======================= Language / Translations =======================
+TR = {
+    "zh": {
+        "tab_clips": "📋 剪贴历史",
+        "tab_snippets": "📁 常用库",
+        "pin": "📌 置顶", "copy": "📋 复制", "delete": "🗑 删除",
+        "clean": "🧹 清空", "add": "＋ 添加", "edit": "✎ 编辑",
+        "search_hint": "搜索...",
+        "preview_hint": "点击列表或常用库中的内容即可预览",
+        "monitoring": "监听中...",
+        "text_only": "仅文字 · 不存图片/文件",
+        "captured": "📋 已捕获",
+        "copied": "✅ 已复制到剪贴板",
+        "pinned": "📌 已置顶", "unpinned": "   已取消置顶",
+        "deleted": "🗑 已删除",
+        "cleaned": "🧹 已清理",
+        "added": "✅ 已添加",
+        "updated": "✅ 已更新",
+        "preview_cleared": "预览已清空",
+        "clips_count": "📋 剪贴板 · {}条",
+        "snippets_count": "常用库 · {}项",
+        "confirm_clean": "删除所有非置顶的剪贴板历史？\n\n📌 已置顶的条目会保留。",
+        "clean_done": "（已清空，仅保留置顶内容）",
+        "help_menu": "帮助",
+        "help_title": "使用说明",
+        "disclaimer_title": "免责声明",
+        "about_title": "关于 ClipVault",
+        "help_text": (
+            "📖 ClipVault 使用说明\n\n"
+            "📋 剪贴板：复制任意文字自动记录，Ctrl+Shift+V 呼出窗口。\n\n"
+            "📁 常用库：保存高频输入的符号、地址、公司名等。\n"
+            "    点「＋ 添加」输入内容和分类即可。\n\n"
+            "蓝色 📋 复制按钮：选中条目后点复制，再贴到任何地方。\n"
+            "橙色 📌 置顶：重要内容固定在列表顶部。\n"
+            "红色 🗑 删除：移除选中条目。\n"
+            "绿色 🧹 清空：一次删除所有非置顶历史。\n\n"
+            "⚠️ 仅记录文本，不保存图片/文件。"
+        ),
+        "title_bar": "永远的兰兰 · 极简剪贴板",
+        "add_prompt": "输入要保存的文字：",
+        "add_category": "分类名称（如：地址、符号、工作）：",
+        "cat_default": "自定义",
+        "edit_prompt": "修改文字：",
+        "about_text": (
+            "ClipVault v1.2\n\n极简剪贴板管理器 + 常用库\n"
+            "Python 3 + tkinter + SQLite\n"
+            "纯本地存储 · 零隐私风险\n\n"
+            "GitHub: https://github.com/podcatcher962/ClipVault\n"
+            "© 永远的兰兰"
+        ),
+    },
+    "en": {
+        "tab_clips": "📋 History",
+        "tab_snippets": "📁 Library",
+        "pin": "📌 Pin", "copy": "📋 Copy", "delete": "🗑 Del",
+        "clean": "🧹 Clear", "add": "＋ Add", "edit": "✎ Edit",
+        "search_hint": "Search...",
+        "preview_hint": "Click an item to preview",
+        "monitoring": "Monitoring...",
+        "text_only": "Text only · No images/files",
+        "captured": "📋 Captured",
+        "copied": "✅ Copied to clipboard",
+        "pinned": "📌 Pinned", "unpinned": "   Unpinned",
+        "deleted": "🗑 Deleted",
+        "cleaned": "🧹 Cleared",
+        "added": "✅ Added",
+        "updated": "✅ Updated",
+        "preview_cleared": "Preview cleared",
+        "clips_count": "📋 Clipboard · {} items",
+        "snippets_count": "Library · {} items",
+        "confirm_clean": "Delete all unpinned clipboard history?\n\n📌 Pinned items will be kept.",
+        "clean_done": "(Cleared — pinned items kept)",
+        "help_menu": "Help",
+        "help_title": "Help",
+        "disclaimer_title": "Disclaimer",
+        "about_title": "About ClipVault",
+        "help_text": (
+            "📖 ClipVault Help\n\n"
+            "📋 Clipboard: auto-records text on copy (Ctrl+C).\n\n"
+            "📁 Library: save frequently used text like symbols, addresses.\n"
+            "    Click ＋ Add to save an item with a category.\n\n"
+            "📋 Copy: select an item, click Copy, paste anywhere.\n"
+            "📌 Pin: keep important items at the top.\n"
+            "🗑 Delete: remove selected item.\n"
+            "🧹 Clear: delete all unpinned history at once.\n\n"
+            "⚠️ Text records only. No images/files."
+        ),
+        "title_bar": "forever-chitanda · Clipboard Manager",
+        "add_prompt": "Enter text to save:",
+        "add_category": "Category name (e.g. Address, Symbols, Work):",
+        "cat_default": "Custom",
+        "edit_prompt": "Edit text:",
+        "about_text": (
+            "ClipVault v1.2\n\nClipboard Manager + Snippet Library\n"
+            "Python 3 + tkinter + SQLite\n"
+            "Local storage · Zero privacy risk\n\n"
+            "GitHub: https://github.com/podcatcher962/ClipVault\n"
+            "© 永远的兰兰 / forever-chitanda"
+        ),
+    },
+}
+
+DISCLAIMER = """⚠️ 免责声明 / Disclaimer
 
 1. 本工具仅供个人学习与工作效率提升使用。所有剪贴板数据完全存储于本地 SQLite 数据库，不会上传至任何服务器，不连接互联网。
 
@@ -98,6 +200,7 @@ class ClipVault:
         self.root.minsize(400, 440)
         self.root.configure(bg='#FAFAFA')
         self.root.attributes('-topmost', True)
+        self.lang = 'zh'
         self._apply_theme()
         self._build_menu()
         self._build_ui()
@@ -105,6 +208,11 @@ class ClipVault:
         self.last_clip = ""
         self.running = True
         self._schedule_monitor()
+
+    def _t(self, key, **fmt):
+        s = TR[self.lang].get(key, key)
+        if fmt: s = s.format(**fmt)
+        return s
 
     def _apply_theme(self):
         self.BG = '#FAFAFA'
@@ -118,42 +226,61 @@ class ClipVault:
         self.fg = '#212121'
         self.fg2 = '#757575'
 
+    def _toggle_lang(self):
+        self.lang = 'en' if self.lang == 'zh' else 'zh'
+        # Update all UI labels
+        self.title_label.config(text=self._t("title_bar"))
+        self.tab_btn1.config(text=self._t("tab_clips"))
+        self.tab_btn2.config(text=self._t("tab_snippets"))
+        self.text_only_label.config(text=self._t("text_only"))
+        self.status.config(text=self._t("monitoring"))
+        self.preview_text.config(state=tk.NORMAL)
+        self.preview_text.delete('1.0', tk.END)
+        self.preview_text.insert('1.0', self._t("preview_hint"))
+        self.preview_text.config(state=tk.DISABLED, fg='#BDBDBD')
+        # Buttons — rebuild label texts
+        for btn in self.clip_buttons:
+            cur = btn.cget('text')
+            for k in ['pin','copy','delete','clean']:
+                if cur.startswith(self._t(k)[:2]):
+                    btn.config(text=self._t(k))
+                    break
+        for btn in self.snippet_buttons:
+            cur = btn.cget('text')
+            for k in ['copy','add','edit','delete']:
+                if cur.startswith(self._t(k)[:2]):
+                    btn.config(text=self._t(k))
+                    break
+        # Clear preview button
+        for child in self.root.winfo_children():
+            self._update_clear_btn(child)
+        # Rebuild menu
+        self._build_menu()
+
+    def _update_clear_btn(self, widget):
+        if isinstance(widget, tk.Button) and widget.cget('text') in ('清空','Clear'):
+            widget.config(text=("清空" if self.lang=='zh' else "Clear"))
+        for child in widget.winfo_children():
+            self._update_clear_btn(child)
+
     def _build_menu(self):
         menubar = tk.Menu(self.root)
         help_menu = tk.Menu(menubar, tearoff=0)
-        help_menu.add_command(label="使用说明", command=self._show_help)
-        help_menu.add_command(label="免责声明", command=self._show_disclaimer)
+        help_menu.add_command(label=self._t("help_title"), command=self._show_help)
+        help_menu.add_command(label=self._t("disclaimer_title"), command=self._show_disclaimer)
         help_menu.add_separator()
-        help_menu.add_command(label="关于 ClipVault", command=self._show_about)
-        menubar.add_cascade(label="帮助", menu=help_menu)
+        help_menu.add_command(label=self._t("about_title"), command=self._show_about)
+        menubar.add_cascade(label=self._t("help_menu"), menu=help_menu)
         self.root.config(menu=menubar)
 
     def _show_help(self):
-        msg = """📖 ClipVault 使用说明
-
-📋 剪贴板：复制任意文字自动记录，Ctrl+Shift+V 呼出窗口。
-
-📁 常用库：保存高频输入的符号、地址、公司名等。
-    点「＋ 添加」输入内容和分类即可。
-
-蓝色 📋 复制按钮：选中条目后点复制，再贴到任何地方。
-橙色 📌 置顶：重要内容固定在列表顶部。
-红色 🗑 删除：移除选中条目。
-绿色 🧹 清空：一次删除所有非置顶历史。
-
-⚠️ 仅记录文本，不保存图片/文件。"""
-        messagebox.showinfo("使用说明", msg)
+        messagebox.showinfo(self._t("help_title"), self._t("help_text"))
 
     def _show_disclaimer(self):
-        messagebox.showinfo("免责声明", DISCLAIMER)
+        messagebox.showinfo(self._t("disclaimer_title"), DISCLAIMER)
 
     def _show_about(self):
-        messagebox.showinfo("关于 ClipVault",
-            "ClipVault v1.1\n\n极简中文剪贴板管理器\n"
-            "Python 3 + tkinter + SQLite\n"
-            "纯本地存储 · 零隐私风险\n\n"
-            "GitHub: https://github.com/podcatcher962/ClipVault\n"
-            "© 永远的兰兰")
+        messagebox.showinfo(self._t("about_title"), self._t("about_text"))
 
     @staticmethod
     def _cbtn(parent, text, color, cmd, side=None, padx=1, small=False):
@@ -172,18 +299,23 @@ class ClipVault:
         title_bar.pack_propagate(False)
         tk.Label(title_bar, text="📋 ClipVault", font=('Microsoft YaHei UI',11,'bold'),
                  bg=self.accent, fg='white').pack(side=tk.LEFT, padx=12, pady=5)
-        tk.Label(title_bar, text="永远的兰兰 · 极简剪贴板", font=('Microsoft YaHei UI',8),
-                 bg=self.accent, fg='#E0D4FF').pack(side=tk.RIGHT, padx=12, pady=5)
+        self.lang_btn = tk.Button(title_bar, text="中/EN", font=('Microsoft YaHei UI',8),
+            bg='#5E35B1', fg='white', relief='flat', bd=0, padx=8, pady=2,
+            cursor='hand2', command=self._toggle_lang)
+        self.lang_btn.pack(side=tk.RIGHT, padx=12, pady=5)
+        self.title_label = tk.Label(title_bar, text=self._t("title_bar"), font=('Microsoft YaHei UI',8),
+                 bg=self.accent, fg='#E0D4FF')
+        self.title_label.pack(side=tk.RIGHT, padx=8, pady=5)
 
         # Tab switcher
         tab_bar = tk.Frame(self.root, bg=self.BG)
         tab_bar.pack(fill=tk.X, padx=10, pady=(8,0))
         self.tab_var = tk.StringVar(value='clips')
         style = {'font':('Microsoft YaHei UI',9), 'relief':'flat', 'bd':0, 'cursor':'hand2', 'padx':16, 'pady':4}
-        self.tab_btn1 = tk.Button(tab_bar, text="📋 剪贴历史", **style, fg='white', bg=self.accent,
+        self.tab_btn1 = tk.Button(tab_bar, text=self._t("tab_clips"), **style, fg='white', bg=self.accent,
             command=lambda: self._switch_tab('clips'))
         self.tab_btn1.pack(side=tk.LEFT, padx=(0,2))
-        self.tab_btn2 = tk.Button(tab_bar, text="📁 常用库", **style, fg=self.fg2, bg='#EEEEEE',
+        self.tab_btn2 = tk.Button(tab_bar, text=self._t("tab_snippets"), **style, fg=self.fg2, bg='#EEEEEE',
             command=lambda: self._switch_tab('snippets'))
         self.tab_btn2.pack(side=tk.LEFT)
 
@@ -206,21 +338,21 @@ class ClipVault:
         # All 8 buttons (clips + snippets) in same frame, shown/hidden per tab
         self.clip_buttons = []
         self.snippet_buttons = []
-        for (text, color, cmd), store in [
-            (("📌 置顶", self.orange, self._toggle_pin), self.clip_buttons),
-            (("📋 复制", self.blue, self._copy_selected), self.clip_buttons),
-            (("🗑 删除", self.red, self._delete_selected), self.clip_buttons),
-            (("🧹 清空", self.teal, self._clean_clips), self.clip_buttons),
+        for (text_key, color, cmd), store in [
+            (("pin", self.orange, self._toggle_pin), self.clip_buttons),
+            (("copy", self.blue, self._copy_selected), self.clip_buttons),
+            (("delete", self.red, self._delete_selected), self.clip_buttons),
+            (("clean", self.teal, self._clean_clips), self.clip_buttons),
         ]:
-            btn = self._cbtn(self.btn_frame, text, color, cmd, side=tk.LEFT, padx=1)
+            btn = self._cbtn(self.btn_frame, self._t(text_key), color, cmd, side=tk.LEFT, padx=1)
             store.append(btn)
-        for (text, color, cmd), store in [
-            (("📋 复制", self.blue, self._copy_selected), self.snippet_buttons),
-            (("＋ 添加", self.green, self._add_snippet), self.snippet_buttons),
-            (("✎ 编辑", self.orange, self._edit_snippet), self.snippet_buttons),
-            (("🗑 删除", self.red, self._delete_selected), self.snippet_buttons),
+        for (text_key, color, cmd), store in [
+            (("copy", self.blue, self._copy_selected), self.snippet_buttons),
+            (("add", self.green, self._add_snippet), self.snippet_buttons),
+            (("edit", self.orange, self._edit_snippet), self.snippet_buttons),
+            (("delete", self.red, self._delete_selected), self.snippet_buttons),
         ]:
-            btn = self._cbtn(self.btn_frame, text, color, cmd, side=tk.LEFT, padx=1)
+            btn = self._cbtn(self.btn_frame, self._t(text_key), color, cmd, side=tk.LEFT, padx=1)
             store.append(btn)
         # Initially show clips buttons
         for b in self.snippet_buttons: b.pack_forget()
@@ -264,10 +396,10 @@ class ClipVault:
             wrap=tk.WORD, bg=self.card_bg, fg='#BDBDBD', state=tk.DISABLED,
             relief='flat', height=5)
         self.preview_text.pack(fill=tk.BOTH, expand=True)
-        self.preview_text.insert('1.0', '点击列表或常用库中的内容即可预览')
+        self.preview_text.insert('1.0', self._t("preview_hint"))
         self.preview_text.config(state=tk.DISABLED)
         # Clear preview button
-        clear_btn = tk.Button(preview_frame, text="清空", font=('Microsoft YaHei UI',7),
+        clear_btn = tk.Button(preview_frame, text=("清空" if self.lang=='zh' else "Clear"), font=('Microsoft YaHei UI',7),
             bg='#EEEEEE', fg=self.fg2, relief='flat', padx=8, pady=1,
             cursor='hand2', command=self._clear_preview)
         clear_btn.place(relx=1.0, anchor='ne', x=-6, y=4)
@@ -275,11 +407,12 @@ class ClipVault:
         # Status
         status_row = tk.Frame(self.root, bg=self.BG)
         status_row.pack(fill=tk.X, padx=12, pady=(0,2))
-        self.status = tk.Label(status_row, text="监听中...", font=('Microsoft YaHei UI',7),
+        self.status = tk.Label(status_row, text=self._t("monitoring"), font=('Microsoft YaHei UI',7),
             bg=self.BG, fg=self.teal, anchor='w')
         self.status.pack(side=tk.LEFT)
-        tk.Label(status_row, text="仅文字 · 不存图片/文件", font=('Microsoft YaHei UI',7),
-            bg=self.BG, fg='#BDBDBD').pack(side=tk.RIGHT)
+        self.text_only_label = tk.Label(status_row, text=self._t("text_only"), font=('Microsoft YaHei UI',7),
+            bg=self.BG, fg='#BDBDBD')
+        self.text_only_label.pack(side=tk.RIGHT)
 
     def _on_focus_in(self, e):
         if self.search_var.get() == '':
@@ -342,7 +475,7 @@ class ClipVault:
                 self.conn.execute("INSERT INTO clips(content,preview) VALUES(?,?)", (current, preview))
                 self.conn.commit()
                 if self.tab_var.get() == 'clips': self._load_clips()
-                self.status.config(text="📋 已捕获")
+                self.status.config(text=self._t("captured"))
         except Exception as e:
             self.status.config(text=f"监听中...")
         self.root.after(500, self._schedule_monitor)
@@ -363,7 +496,7 @@ class ClipVault:
             prefix = "📌 " if pinned else "   "
             self.clip_list.insert(tk.END, prefix + (preview or '(空)'))
             self._list_ids.append(('clip', cid))
-        self.status.config(text=f"📋 剪贴板 · {len(rows)}条")
+        self.status.config(text=self._t("clips_count", len(rows)))
 
     def _load_snippets(self):
         # Clear old grid
@@ -409,7 +542,7 @@ class ClipVault:
             col_idx += 1
             if col_idx >= max_cols:
                 col_idx = 0; row_idx += 1
-        self.status.config(text=f"常用库 · {len(rows)}项")
+        self.status.config(text=self._t("clips_count", len(rows)))
 
     def _snippet_click(self, content, sid, btn):
         # Deselect previous (check widget still exists)
@@ -431,10 +564,10 @@ class ClipVault:
     def _clear_preview(self):
         self.preview_text.config(state=tk.NORMAL, fg='#BDBDBD')
         self.preview_text.delete('1.0', tk.END)
-        self.preview_text.insert('1.0', '点击列表或常用库中的内容即可预览')
+        self.preview_text.insert('1.0', self._t("preview_hint"))
         self.preview_text.config(state=tk.DISABLED)
         self._last_snip_id = None; self._last_snip_content = None
-        self.status.config(text="预览已清空")
+        self.status.config(text=self._t("preview_cleared"))
 
     def _on_select(self, e):
         sel = self.clip_list.curselection()
@@ -450,7 +583,7 @@ class ClipVault:
         if self.tab_var.get() == 'snippets':
             if hasattr(self, '_last_snip_content'):
                 pyperclip.copy(self._last_snip_content)
-                self.status.config(text="✅ 已复制到剪贴板")
+                self.status.config(text=self._t("copied"))
             return
         sel = self.clip_list.curselection()
         if not sel: return
@@ -479,7 +612,7 @@ class ClipVault:
             self.conn.execute("UPDATE clips SET pinned=? WHERE id=?", (new_val, rid))
             self.conn.commit()
             self._load_clips()
-            self.status.config(text="📌 已置顶" if new_val else "   已取消置顶")
+            self.status.config(text=self._t("pinned") if new_val else self._t("unpinned"))
 
     def _delete_selected(self):
         if self.tab_var.get() == 'snippets':
@@ -488,7 +621,7 @@ class ClipVault:
                 self.conn.commit()
                 self._load_snippets()
                 self._last_snip_id = None
-                self.status.config(text="🗑 已删除")
+                self.status.config(text=self._t("deleted"))
             return
         sel = self.clip_list.curselection()
         if not sel: return
@@ -502,38 +635,38 @@ class ClipVault:
         self.status.config(text="🗑 已删除")
 
     def _clean_clips(self):
-        if messagebox.askyesno('确认清理', '删除所有非置顶的剪贴板历史？\n\n📌 已置顶的条目会保留。'):
+        if messagebox.askyesno(self._t("clean"), self._t("confirm_clean")):
             self.conn.execute("DELETE FROM clips WHERE pinned=0")
             self.conn.commit()
             self._load_clips()
             self.preview_text.config(state=tk.NORMAL)
             self.preview_text.delete('1.0', tk.END)
-            self.preview_text.insert('1.0', '（已清空，仅保留置顶内容）')
+            self.preview_text.insert('1.0', self._t("clean_done"))
             self.preview_text.config(state=tk.DISABLED)
-            self.status.config(text="🧹 已清理")
+            self.status.config(text=self._t("cleaned"))
 
     # ======================= Snippets =======================
     def _add_snippet(self):
-        text = simpledialog.askstring("添加常用项", "输入要保存的文字：", parent=self.root)
+        text = simpledialog.askstring(self._t("add"), self._t("add_prompt"), parent=self.root)
         if not text or not text.strip(): return
-        cat = simpledialog.askstring("分类", "分类名称（如：地址、符号、工作）：", initialvalue="自定义", parent=self.root)
+        cat = simpledialog.askstring(self._t("add"), self._t("add_category"), initialvalue=self._t("cat_default"), parent=self.root)
         self.conn.execute("INSERT INTO snippets(title,content,category,sort_order) VALUES(?,?,?,0)",
-                          (text[:30], text, cat or "自定义"))
+                          (text[:30], text, cat or self._t("cat_default")))
         self.conn.commit()
         self._load_snippets()
-        self.status.config(text="✅ 已添加")
+        self.status.config(text=self._t("added"))
 
     def _edit_snippet(self):
         if not hasattr(self, '_last_snip_id') or not self._last_snip_id: return
         row = self.conn.execute("SELECT content FROM snippets WHERE id=?", (self._last_snip_id,)).fetchone()
         if not row: return
         if not row: return
-        new_text = simpledialog.askstring("编辑", "修改文字：", initialvalue=row[0], parent=self.root)
+        new_text = simpledialog.askstring(self._t("edit"), self._t("edit_prompt"), initialvalue=row[0], parent=self.root)
         if new_text and new_text.strip():
             self.conn.execute("UPDATE snippets SET content=?,title=? WHERE id=?", (new_text, new_text[:30], rid))
             self.conn.commit()
             self._load_snippets()
-            self.status.config(text="✅ 已更新")
+            self.status.config(text=self._t("updated"))
 
 
 if __name__ == '__main__':
