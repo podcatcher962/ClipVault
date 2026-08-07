@@ -27,8 +27,8 @@ TR = {
         "added": "✅ 已添加",
         "updated": "✅ 已更新",
         "preview_cleared": "预览已清空",
-        "clips_count": "📋 剪贴板 · {}条",
-        "snippets_count": "常用库 · {}项",
+        "clips_count": "📋 剪贴板 · {count}条",
+        "snippets_count": "常用库 · {count}项",
         "confirm_clean": "删除所有非置顶的剪贴板历史？\n\n📌 已置顶的条目会保留。",
         "clean_done": "（已清空，仅保留置顶内容）",
         "help_menu": "帮助",
@@ -76,8 +76,8 @@ TR = {
         "added": "✅ Added",
         "updated": "✅ Updated",
         "preview_cleared": "Preview cleared",
-        "clips_count": "📋 Clipboard · {} items",
-        "snippets_count": "Library · {} items",
+        "clips_count": "📋 Clipboard · {count} items",
+        "snippets_count": "Library · {count} items",
         "confirm_clean": "Delete all unpinned clipboard history?\n\n📌 Pinned items will be kept.",
         "clean_done": "(Cleared — pinned items kept)",
         "help_menu": "Help",
@@ -496,7 +496,7 @@ class ClipVault:
             prefix = "📌 " if pinned else "   "
             self.clip_list.insert(tk.END, prefix + (preview or '(空)'))
             self._list_ids.append(('clip', cid))
-        self.status.config(text=self._t("clips_count", len(rows)))
+        self.status.config(text=self._t("clips_count", count=len(rows)))
 
     def _load_snippets(self):
         # Clear old grid
@@ -542,7 +542,7 @@ class ClipVault:
             col_idx += 1
             if col_idx >= max_cols:
                 col_idx = 0; row_idx += 1
-        self.status.config(text=self._t("clips_count", len(rows)))
+        self.status.config(text=self._t("clips_count", count=len(rows)))
 
     def _snippet_click(self, content, sid, btn):
         # Deselect previous (check widget still exists)
