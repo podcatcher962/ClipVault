@@ -1,6 +1,6 @@
 # ClipVault v1.2
 
-> 极简剪贴板管理器 + 常用库 / Clipboard Manager + Snippet Library
+> 剪贴板管理器 + 常用库 — 桌面版 + Web版 / Clipboard Manager + Snippet Library — Desktop + Web
 
 [中文](#中文) | [English](#english)
 
@@ -10,30 +10,41 @@
 
 ### 简介
 
-ClipVault 是一款极简的 Windows 剪贴板管理工具。复制任意文字自动记录，内置常用符号库，一键粘贴。
+ClipVault 是一款剪贴板管理工具。**两个版本**：Windows 桌面版自动监听剪贴板，**Web 版点黏贴即可读取**。内置常用符号库（数学符号、特殊字符、中文标点、工作模板），一键复制粘贴。
+
+### 🚀 两个版本
+
+| 版本 | 适用平台 | 剪贴板方式 | 文件 |
+|------|------|------|------|
+| 💻 **桌面版** | Windows (.exe) | 自动后台监听 | ClipVault.exe (12MB) |
+| 🌐 **Web 版** | 浏览器通用 | 点黏贴读取 | clipvault.html (单文件) |
+
+Web 版点黏贴按钮直接读取剪贴板（需浏览器授权），数据存储在 localStorage 中。
 
 ### 功能
 
-- 📋 **自动监听** — 复制文本自动记录，不存图片/文件
-- 📁 **常用库** — 内置数学符号、特殊符号、中文标点、工作模板
-- 🔍 **搜索过滤** — 快速搜索历史记录和常用库
-- 📌 **置顶** — 重要内容固定列表顶部
-- 🗑 **清空** — 一键清理非置顶历史
-- 🔒 **纯本地** — SQLite 存储，不联网不上传
+- 📋 **剪贴历史** — 保存复制过的文字，最多 1000 条
+- 📌 **置顶** — 重要内容固定在顶部
+- 🧹 **清空** — 一键清理非置顶历史
+- 📁 **常用库 (4 列网格)** — 数学符号、特殊符号、中文标点、工作模板
+- ＋ **添加 / ✎ 编辑** — 自定义常用内容
+- 🔍 **搜索** — 过滤历史和库
 - 🌐 **中英双语** — 点 中/EN 一键切换
+- 📋 **复制按钮** — 选中条目一键复制到剪贴板
+- 🔒 **纯本地** — localStorage，不联网不上传
 
-### 使用
+### 免责声明
 
-1. 下载 `ClipVault.exe`，双击运行
-2. 复制任意文字（Ctrl+C）即可自动记录
-3. 点「常用库」查看预设符号，点「＋ 添加」添加自定义内容
-4. 选中条目点「📋 复制」即可粘贴到任何地方
+1. ClipVault 是纯本地工具。桌面版数据存储在本地 SQLite 数据库，Web 版存储在浏览器 localStorage 中。均不上传至任何服务器。
+2. 桌面版仅记录 Ctrl+C 复制的文本内容，不记录图片、文件、键盘输入。Web 版需用户主动点击黏贴按钮并授权。
+3. 本软件按"原样"（AS-IS）提供，不提供任何明示或暗示的担保。
+4. 预设库中的符号为 Unicode 标准字符，不涉及第三方版权。
+5. 使用者须遵守所在地法律法规。
 
 ### 技术
 
-- Python 3 + tkinter + SQLite
-- 单文件 12MB，无需安装
-- 仅记录文本，不保存图片/文件
+- 桌面版：Python 3 + tkinter + SQLite，单文件 12MB
+- Web 版：纯 HTML + CSS + JS，单文件无依赖
 
 ### 关于
 
@@ -46,54 +57,43 @@ GitHub: https://github.com/podcatcher962/ClipVault
 
 ### Overview
 
-ClipVault is a minimalist Windows clipboard manager. Auto-records text on copy, built-in snippet library, one-click paste.
+ClipVault is a clipboard management tool. **Two editions**: Windows desktop with auto-monitoring, **Web version with one-click paste**. Built-in snippet library.
+
+### 🚀 Two Editions
+
+| Edition | Platforms | Clipboard | File |
+|------|------|------|------|
+| 💻 **Desktop** | Windows (.exe) | Auto-monitor | ClipVault.exe (12MB) |
+| 🌐 **Web** | Any browser | Click-paste | clipvault.html (single file) |
+
+Web version reads clipboard on paste button click (requires browser permission). Data in localStorage.
 
 ### Features
 
-- 📋 **Auto-monitor** — Records text on copy (Ctrl+C), no images/files
-- 📁 **Snippet Library** — Built-in math symbols, special chars, work templates
-- 🔍 **Search** — Filter history and library instantly
-- 📌 **Pin** — Keep important items at the top
-- 🗑 **Clear** — Remove all unpinned history at once
-- 🔒 **Local Only** — SQLite storage, no internet, no upload
-- 🌐 **Bilingual** — Click 中/EN to toggle Chinese/English
+- 📋 **Clip History** — Auto-save copied text, up to 1000 items
+- 📌 **Pin** — Keep important items at top
+- 🧹 **Clear** — Remove all unpinned history
+- 📁 **Library (4-column grid)** — Math symbols, special chars, punctuation, templates
+- ＋ **Add / ✎ Edit** — Custom snippets
+- 🔍 **Search** — Filter history and library
+- 🌐 **Bilingual** — Click 中/EN to toggle
+- 📋 **Copy button** — One-click copy
+- 🔒 **Pure local** — localStorage
 
-### Usage
+### Disclaimer
 
-1. Download `ClipVault.exe`, double-click to run
-2. Copy any text (Ctrl+C) — it's automatically recorded
-3. Click "Library" tab for preset symbols, or "＋ Add" to save your own
-4. Select an item, click "📋 Copy", paste anywhere
+1. Pure local tool. Desktop: SQLite; Web: localStorage. No server uploads.
+2. Desktop only records Ctrl+C text; no images, files, or keystrokes. Web requires user click + permission.
+3. Provided AS-IS without warranty.
+4. Preset symbols are Unicode standard.
+5. Users must comply with local laws.
 
 ### Tech
 
-- Python 3 + tkinter + SQLite
-- Single-file 12MB, no installation
-- Text only — no images/files stored
+- Desktop: Python 3 + tkinter + SQLite, single-file 12MB
+- Web: Pure HTML + CSS + JS, single-file
 
 ### About
 
 GitHub: https://github.com/podcatcher962/ClipVault
 © 永远的兰兰 / forever-chitanda
-
----
-
-## 免责声明 / Disclaimer
-
-### 中文
-
-1. ClipVault 的剪贴板监听功能仅记录用户主动复制（Ctrl+C）的文字内容，不记录图片、文件路径、二进制数据。本软件不记录键盘输入（非键盘记录器），仅被动读取系统剪贴板中的文本变化。
-2. 任何具有管理员权限的程序均可读取系统剪贴板。本软件与 Windows 系统剪贴板机制一致，不引入额外安全风险。用户应自行避免将密码、银行卡号等敏感信息存入剪贴板。
-3. 本软件按"原样"（AS-IS）提供，不提供任何明示或暗示的担保。开发者不对因使用或无法使用本软件导致的任何数据丢失承担责任。
-4. 所有剪贴板数据完全存储于本地 SQLite 数据库，不会上传至任何服务器，不连接互联网。
-5. 预设常用库中的数学符号、特殊字符等为 Unicode 标准字符，不涉及第三方版权。
-6. 使用者须遵守所在地法律法规。本软件仅供个人学习与工作效率提升使用。
-
-### English
-
-1. ClipVault only records text copied via Ctrl+C. No images, files, or binary data. It is NOT a keylogger — it passively reads text changes from the system clipboard only.
-2. Any program with admin privileges can read the system clipboard. ClipVault operates within standard Windows clipboard mechanisms and introduces no additional security risk. Do not copy sensitive information like passwords or bank card numbers.
-3. This software is provided AS-IS without warranty of any kind. The developer assumes no responsibility for data loss resulting from use or inability to use this software.
-4. All clipboard data is stored entirely in a local SQLite database. No data is uploaded to any server.
-5. Preset library symbols are standard Unicode characters and do not involve third-party copyright.
-6. Users must comply with local laws. For personal study and productivity use only.
