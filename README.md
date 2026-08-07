@@ -1,86 +1,77 @@
-# 📋 ClipVault
+# ClipVault v1.2
 
-> Minimalist Chinese clipboard manager. Copy. Search. Pin. Done.
+> 极简剪贴板管理器 + 常用库 / Clipboard Manager + Snippet Library
 
-A clean, native Windows desktop app that silently watches your clipboard and keeps everything searchable. No cloud, no account, no nonsense.
-
-<p align="center">
-  <img src="docs/screenshot.png" alt="screenshot" width="500">
-</p>
+[中文](#中文) | [English](#english)
 
 ---
 
-## ✨ Features
+## 中文
 
-| Feature | Detail |
-|---------|--------|
-| 📋 **Auto-capture** | Any text you Ctrl+C is logged instantly |
-| 🔍 **Instant search** | Type to filter — works across all clips |
-| 📌 **Pin** | Keep important clips (email, address) at the top |
-| 🧹 **Cleanup** | One click to clear all unpinned clips |
-| 📁 **Snippet Library** | Built-in math symbols, special chars, punctuation — 6 categories, 100+ items |
-| ⚡ **4-column palette** | Click any symbol to copy — no scrolling in a list |
-| ✏️ **Custom snippets** | Add your own (company names, addresses, templates) |
-| 🌐 **Open source** | Python 3 + tkinter + SQLite, zero extra dependencies |
+### 简介
 
----
+ClipVault 是一款极简的 Windows 剪贴板管理工具。复制任意文字自动记录，内置常用符号库，一键粘贴。
 
-## 📁 Snippet Library (Built-in)
+### 功能
 
-| Category | Content |
-|----------|---------|
-| 📐 数学符号 | × ÷ ± √ ∞ ≤ ≥ π α β ∑ ∫ ... |
-| 🔤 特殊符号 | ① ② ③ ★ ♥ ◆ → ← ↑ ↓ ™ © ® ... |
-| ⌨ 常用符号 | @ # $ % & * ( ) { } [ ] \\ ... |
-| 🈳 中文标点 | 「」『』【】—— ... |
-| ⌨️ 英文标点 | — – … • · $ € £ ¥ ... |
-| 💼 工作常用 | 收到谢谢 / 请查收附件 / 完成确认 ... |
+- 📋 **自动监听** — 复制文本自动记录，不存图片/文件
+- 📁 **常用库** — 内置数学符号、特殊符号、中文标点、工作模板
+- 🔍 **搜索过滤** — 快速搜索历史记录和常用库
+- 📌 **置顶** — 重要内容固定列表顶部
+- 🗑 **清空** — 一键清理非置顶历史
+- 🔒 **纯本地** — SQLite 存储，不联网不上传
+- 🌐 **中英双语** — 点 中/EN 一键切换
 
----
+### 使用
 
-## 🚀 Quick Start
+1. 下载 `ClipVault.exe`，双击运行
+2. 复制任意文字（Ctrl+C）即可自动记录
+3. 点「常用库」查看预设符号，点「＋ 添加」添加自定义内容
+4. 选中条目点「📋 复制」即可粘贴到任何地方
 
-1. Download `ClipVault.exe` from [Releases](https://github.com/podcatcher962/ClipVault/releases)
-2. Double-click to run
-3. Start copying text — it auto-captures
-4. Click any snippet to preview, double-click to copy
-5. Use **📁 常用库** tab for built-in symbols + your own custom snippets
-
-**No installation required. No Python needed.**
-
----
-
-## 🛠 Tech Stack
+### 技术
 
 - Python 3 + tkinter + SQLite
-- Single `.exe` file (~9 MB)
-- Windows 10 / 11
+- 单文件 12MB，无需安装
+- 仅记录文本，不保存图片/文件
+
+### 关于
+
+GitHub: https://github.com/podcatcher962/ClipVault
+© 永远的兰兰
 
 ---
 
-## ⚠️ Disclaimer / 免责声明
+## English
 
-**English**
+### Overview
 
-1. This tool is for personal productivity use only. All clipboard data is stored **locally** in a SQLite database. No data is ever uploaded to any server.
-2. The clipboard monitor only records **text** content actively copied by the user (Ctrl+C). It does **NOT** record images, files, or keyboard input (not a keylogger). It passively reads text changes from the system clipboard only.
-3. **Privacy**: any program with appropriate permissions can read the Windows clipboard. This software introduces no additional risk beyond the normal clipboard mechanism. Users should avoid storing passwords, bank details, or other sensitive data in the clipboard.
-4. This software is provided **AS-IS** without warranty of any kind, express or implied. The developer shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use this software.
-5. Built-in snippet library content (symbols, characters) is standard Unicode — no third-party copyright is involved.
-6. Users must comply with applicable laws. Minors should use under parental guidance.
+ClipVault is a minimalist Windows clipboard manager. Auto-records text on copy, built-in snippet library, one-click paste.
 
-**中文**
+### Features
 
-1. 本工具仅供个人学习与工作效率提升使用。所有剪贴板数据完全存储于本地 SQLite 数据库，不会上传至任何服务器。
-2. 剪贴板监听仅记录用户主动复制的文字内容，不记录图片、文件或键盘输入（非键盘记录器）。
-3. 任何具有管理员权限的程序均可读取系统剪贴板，本软件不引入额外安全风险。用户应避免将敏感信息存入剪贴板。
-4. 本软件按"原样"提供，开发者不对因使用导致的任何数据丢失承担责任。
-5. 预设内容为标准 Unicode 字符，不涉及第三方版权。
-6. 使用者须遵守所在地法律法规。
+- 📋 **Auto-monitor** — Records text on copy (Ctrl+C), no images/files
+- 📁 **Snippet Library** — Built-in math symbols, special chars, work templates
+- 🔍 **Search** — Filter history and library instantly
+- 📌 **Pin** — Keep important items at the top
+- 🗑 **Clear** — Remove all unpinned history at once
+- 🔒 **Local Only** — SQLite storage, no internet, no upload
+- 🌐 **Bilingual** — Click 中/EN to toggle Chinese/English
 
----
+### Usage
 
-## 👤 Author
+1. Download `ClipVault.exe`, double-click to run
+2. Copy any text (Ctrl+C) — it's automatically recorded
+3. Click "Library" tab for preset symbols, or "＋ Add" to save your own
+4. Select an item, click "📋 Copy", paste anywhere
 
-- **GitHub**: [podcatcher962](https://github.com/podcatcher962)
-- **License**: MIT
+### Tech
+
+- Python 3 + tkinter + SQLite
+- Single-file 12MB, no installation
+- Text only — no images/files stored
+
+### About
+
+GitHub: https://github.com/podcatcher962/ClipVault
+© 永远的兰兰 / forever-chitanda
